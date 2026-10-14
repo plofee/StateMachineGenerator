@@ -1,6 +1,4 @@
-﻿namespace StateMachineGenerator;
-
-class Program
+﻿class Program
 {
     static void Main(string[] args)
     {
@@ -77,7 +75,7 @@ class Program
                 Console.WriteLine("Enter arguments for input or leave blank:");
                 stateMachineGenerator.AddInput(entered, Console.ReadLine());
             }
-        } while (string.IsNullOrEmpty(entered));
+        } while (!string.IsNullOrEmpty(entered));
         
         PrintWithSeparator("Start entering State Machine outputs. Leave blank when finished.");
         do
@@ -89,7 +87,7 @@ class Program
                 Console.WriteLine("Enter arguments for output or leave blank:");
                 stateMachineGenerator.AddOutput(entered, Console.ReadLine());
             }
-        } while (string.IsNullOrEmpty(entered));
+        } while (!string.IsNullOrEmpty(entered));
         
         PrintWithSeparator("Generate saving logic? (y/N)");
         entered = Console.ReadLine() ?? "";
@@ -98,9 +96,21 @@ class Program
         PrintWithSeparator("Generate settings file? (y/N)");
         entered = Console.ReadLine() ?? "";
         stateMachineGenerator.HasSettings = entered.ToLower().Contains('y');
-        
-        stateMachineGenerator.GenerateFiles();
-        Console.WriteLine("Files generated successfully.");
+        if (stateMachineGenerator.HasSavingLogic)
+        {
+            Console.WriteLine("Enter the name of the chunk you want the save data to be part of (default is App)");
+            stateMachineGenerator.SavingChunk = Console.ReadLine() ?? "App";
+        }
+
+        try
+        {
+            stateMachineGenerator.GenerateFiles();
+            Console.WriteLine("Files generated successfully.");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"File generation failed because of: {e.Message}");
+        }
     }
 
     private static void PrintWithSeparator(string line)
