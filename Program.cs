@@ -96,7 +96,7 @@
         if (stateMachineGenerator.HasSavingLogic)
         {
             PrintWithSeparatorAndHighlightedText("Enter the name of the chunk you want the save data to be part of", "if you leave blank the default 'App' will be used");
-            stateMachineGenerator.SavingChunk = Console.ReadLine() ?? "App";
+            stateMachineGenerator.SavingChunk = Console.ReadLine();
         }
         
         PrintWithSeparatorAndHighlightedText("Generate settings file?", "y/N");

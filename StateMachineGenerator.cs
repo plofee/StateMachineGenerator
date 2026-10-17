@@ -40,7 +40,11 @@ public class StateMachineGenerator
     public bool UseExtendedStateFileName { get; set; }
     public bool HasSettings { get; set; }
     public bool HasSavingLogic { set; get; }
-    public string SavingChunk { set; get; }
+    public string SavingChunk
+    {
+        get;
+        set => field = string.IsNullOrEmpty(value) ? "App" : value;
+    }
 
     private string _rootPath;
     private bool _overwriteFiles;
@@ -287,9 +291,6 @@ public class StateMachineGenerator
             "{",
             "\t[Save(\"state_machine\")]",
             $"\tpublic required I{Name}Logic StateMachine {{ get; init; }}",
-            "",
-            "\t[Save(\"id\")]",
-            "\tpublic required uint Id { get; init; }",
             "}",
         ]);
         return lines;
