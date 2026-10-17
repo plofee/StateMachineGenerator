@@ -13,21 +13,18 @@
             return;
         }
         
-        PrintWithSeparator("Do you want the generated files in a namespace? (enter name if you do or leave blank if you don't)");
+        PrintWithSeparatorAndHighlightedText("Do you want the generated files in a namespace?", "enter name if you do or leave blank");
         stateMachineGenerator.Namespace = Console.ReadLine();
         
-        PrintWithSeparator("Do you want a particular initial state? (enter the state name or leave blank if you don't)");
+        PrintWithSeparatorAndHighlightedText("Do you want a particular initial state?", "enter the state name or leave blank");
         string stateName = Console.ReadLine() ?? ""; 
         stateMachineGenerator.InitialState = stateName;
         
-        PrintWithSeparator("Start entering possible states. When you are finished with the states leave the line blank and hit enter to continue.");
-        Console.WriteLine("If you just enter the name of the state, that state will be a child of State (the default parent for states).");
-        Console.WriteLine("You can create states that are children of other states by following the convention: ParentState.ChildState");
-        Console.WriteLine("Additionally, if a state is a child of the previously entered state start with a dot: .ChildState");
-        Console.WriteLine("If a state has the same parent as the previously entered state start with two dots: ..ChildState");
+        PrintWithSeparator("Start entering possible states. When you are finished with the states submit a blank line to continue.");
         string parentOdPrevious = "State";
         string previous = stateName;
         string entered;
+        
         do
         {
             entered = Console.ReadLine() ?? "";
@@ -65,7 +62,10 @@
             }
         } while (!string.IsNullOrEmpty(entered));
         
-        PrintWithSeparator("Start entering State Machine inputs. Leave name blank when finished.");
+        PrintWithSeparatorAndHighlightedText("Do you want that the state file names start with 'StateMachineNameLogic.State.'", "y/N");
+        stateMachineGenerator.UseExtendedStateFileName = (Console.ReadLine() ?? "").ToLower().Contains('y');
+        
+        PrintWithSeparatorAndHighlightedText("Start entering State Machine inputs.", "leave name blank when finished");
         do
         {
             PrintWithSeparator("Enter input name:");
@@ -77,7 +77,8 @@
             }
         } while (!string.IsNullOrEmpty(entered));
         
-        PrintWithSeparator("Start entering State Machine outputs. Leave blank when finished.");
+        PrintWithSeparatorAndHighlightedText("Start entering State Machine outputs.", "leave name blank when finished");
+
         do
         {
             PrintWithSeparator("Enter output name:");
@@ -89,18 +90,18 @@
             }
         } while (!string.IsNullOrEmpty(entered));
         
-        PrintWithSeparator("Generate saving logic? (y/N)");
+        PrintWithSeparatorAndHighlightedText("Generate saving logic?", "y/N");
         entered = Console.ReadLine() ?? "";
         stateMachineGenerator.HasSavingLogic = entered.ToLower().Contains('y');
-        
-        PrintWithSeparator("Generate settings file? (y/N)");
-        entered = Console.ReadLine() ?? "";
-        stateMachineGenerator.HasSettings = entered.ToLower().Contains('y');
         if (stateMachineGenerator.HasSavingLogic)
         {
-            Console.WriteLine("Enter the name of the chunk you want the save data to be part of (default is App)");
+            PrintWithSeparatorAndHighlightedText("Enter the name of the chunk you want the save data to be part of", "if you leave blank the default 'App' will be used");
             stateMachineGenerator.SavingChunk = Console.ReadLine() ?? "App";
         }
+        
+        PrintWithSeparatorAndHighlightedText("Generate settings file?", "y/N");
+        entered = Console.ReadLine() ?? "";
+        stateMachineGenerator.HasSettings = entered.ToLower().Contains('y');
 
         try
         {
@@ -115,8 +116,16 @@
 
     private static void PrintWithSeparator(string line)
     {
-        Console.WriteLine("");
         Console.WriteLine(new string('-', line.Length));
         Console.WriteLine(line);
+    }
+
+    private static void PrintWithSeparatorAndHighlightedText(string line, string highlightedText)
+    {
+        Console.WriteLine(new string('-', line.Length + highlightedText.Length + 1));
+        Console.Write(line);
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($" ({highlightedText})");
+        Console.ResetColor();
     }
 }

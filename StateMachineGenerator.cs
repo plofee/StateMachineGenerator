@@ -37,6 +37,7 @@ public class StateMachineGenerator
     public Dictionary<string, List<string>> States { get; private set; }
     public List<InputOutput> Inputs { get; private set; }
     public List<InputOutput> Outputs { get; private set; }
+    public bool UseExtendedStateFileName { get; set; }
     public bool HasSettings { get; set; }
     public bool HasSavingLogic { set; get; }
     public string SavingChunk { set; get; }
@@ -58,7 +59,17 @@ public class StateMachineGenerator
         if (!States.ContainsKey(parent))
         {
             States[parent] = [name];
-            if (States["State"].Contains(parent) == false)
+            bool isNewParent = true;
+            foreach (string key in States.Keys)
+            {
+                if (States[key].Contains(parent))
+                {
+                    isNewParent = false;
+                    break;
+                }
+            }
+            
+            if (isNewParent)
             {
                 States["State"].Add(parent);
             }
@@ -78,7 +89,11 @@ public class StateMachineGenerator
         string path = $"{_rootPath}/{ToCamelCase(Name)}";
         CreateFolderIfMissing(path);
         CreateFileIfMissing($"{path}/{Name}.cs", GenerateAutoNodeLines());
-        CreateFileIfMissing($"{path}/{Name}Logic.Settings.cs", GenerateSettingsLines());
+        if (HasSettings)
+        {
+            CreateFileIfMissing($"{path}/{Name}Logic.Settings.cs", GenerateSettingsLines());
+        }
+        
         if (HasSavingLogic)
         {
             CreateFileIfMissing($"{path}/{Name}Data.cs", GenerateDataLines());
@@ -101,19 +116,43 @@ public class StateMachineGenerator
         {
             for (int i = 0; i < States[key].Count; i++)
             {
-                string extendedPath;
-                if (key == "State")
-                {
-                    extendedPath = $"{path}/{States[key][i]}.cs";
-                }
-                else
-                {
-                    extendedPath = $"{path}/{key}.{States[key][i]}.cs";
-                }
+                string classNamePrefix = UseExtendedStateFileName ? $"{Name}Logic.State." : "";
+                string extendedPath = $"{path}/{classNamePrefix}{ResolveFileNameForState(States[key][i])}";
                 CreateFileIfMissing(extendedPath, GenerateStateLines(States[key][i], key));
             }
         }
 #endregion
+    }
+
+    private string ResolveFileNameForState(string stateName)
+    {
+        string fullName = $"{stateName}.cs"; 
+        if (States["State"].Contains(stateName))
+        {
+            return fullName;
+        }
+
+        do
+        {
+            string parent = "";
+            foreach (string key in States.Keys)
+            {
+                if (States[key].Contains(stateName))
+                {
+                    parent = key;
+                    break;
+                }
+            }
+
+            if (parent != "State")
+            {
+                fullName = $"{parent}.{fullName}";
+            }
+            
+            stateName = parent;
+        } while (stateName != "State");
+        
+        return fullName;
     }
 
     private List<string> GenerateAutoNodeLines()
@@ -412,10 +451,6 @@ public class StateMachineGenerator
             }
         }
         
-        if (string.IsNullOrEmpty(Namespace) == false)
-        {
-            lines = lines.Prepend($"namespace {Namespace};\n");
-        }
         File.WriteAllLines(path, lines);
     }
     
