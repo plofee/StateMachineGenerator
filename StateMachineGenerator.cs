@@ -118,7 +118,7 @@ public class StateMachineGenerator
 
     private List<string> GenerateAutoNodeLines()
     {
-        List<string> lines = [];
+        List<string> lines = GetLineList();
 
         if (HasSavingLogic)
         {
@@ -232,7 +232,10 @@ public class StateMachineGenerator
     }
 
     private List<string> GenerateDataLines()
-        => [
+    {
+        List<string> lines = GetLineList();
+        lines.AddRange(
+        [
             "using System;",
             "using System.Collections.Generic;",
             "using Chickensoft.Collections;",
@@ -249,11 +252,14 @@ public class StateMachineGenerator
             "\t[Save(\"id\")]",
             "\tpublic required uint Id { get; init; }",
             "}",
-        ];
+        ]);
+        return lines;
+    }
 
     private List<string> GenerateLogicFileLines()
     {
-        List<string> lines =
+        List<string> lines = GetLineList();
+        lines.AddRange(
         [
             "using System.Collections.Generic;",
             "using Chickensoft.Introspection;",
@@ -266,7 +272,7 @@ public class StateMachineGenerator
             "[LogicBlock(typeof(State), Diagram = true)]",
             $"public partial class {Name}Logic : LogicBlock<{Name}Logic.State>, I{Name}Logic",
             "{"
-        ];
+        ]);
 
         if (InitialState == "State")
         {
@@ -293,7 +299,10 @@ public class StateMachineGenerator
     }
 
     private List<string> GenerateLogicDataLines()
-        => [
+    {
+        List<string> lines = GetLineList();
+        lines.AddRange(
+        [
             "using System.Collections.Generic;",
             "using Chickensoft.Introspection;",
             "using Chickensoft.Serialization;",
@@ -307,14 +316,17 @@ public class StateMachineGenerator
             "\t{",
             "\t}",
             "}",
-        ];
+        ]);
+        return lines;
+    }
 
     private List<string> GenerateInputLines() => GenerateInputOutputLines("Input", Inputs);
     private List<string> GenerateOutputLines() => GenerateInputOutputLines("Output", Outputs);
 
     private List<string> GenerateInputOutputLines(string type, List<InputOutput> members)
     {
-        List<string> lines =
+        List<string> lines = GetLineList();
+        lines.AddRange(
         [
             "using Godot;",
             "",
@@ -322,7 +334,7 @@ public class StateMachineGenerator
             "{",
             $"\tpublic static class {type}",
             "\t{"
-        ];
+        ]);
 
         for (int i = 0; i < members.Count; i++)
         {
@@ -341,7 +353,10 @@ public class StateMachineGenerator
     }
 
     private List<string> GenerateSettingsLines()
-        => [
+    {
+        List<string> lines = GetLineList();
+        lines.AddRange(
+        [
             "using Godot;",
             "",
             $"public partial class {Name}Logic",
@@ -351,11 +366,15 @@ public class StateMachineGenerator
             "\t{",
             "\t}",
             "}"
-        ];
-    
+        ]);
+        return lines;
+    }
 
     private List<string> GenerateStateLines(string stateName, string parentName)
-        => [
+    {
+        List<string> lines = GetLineList();
+        lines.AddRange(
+        [
             "using Chickensoft.LogicBlocks;",
             "using Chickensoft.Introspection;",
             "using Chickensoft.Collections;",
@@ -374,7 +393,9 @@ public class StateMachineGenerator
             "\t\t}",
             "\t}",
             "}"
-        ];
+        ]);
+        return lines;
+    }
     
     private void CreateFileIfMissing(string path, IEnumerable<string> lines)
     {
@@ -403,6 +424,21 @@ public class StateMachineGenerator
         if (!Directory.Exists(fullPath))
         {
             _ = Directory.CreateDirectory(fullPath);
+        }
+    }
+
+    private List<string> GetLineList()
+    {
+        if (string.IsNullOrEmpty(Namespace))
+        {
+            return [];
+        }
+        else
+        {
+            return [
+                $"namespace {Namespace};",
+                ""
+            ];
         }
     }
     
