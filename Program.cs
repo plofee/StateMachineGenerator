@@ -25,7 +25,7 @@
         
         PrintWithSeparator("Start entering possible states. When you are finished with the states submit a blank line to continue.");
         string parentOdPrevious = "State";
-        string previous = stateName;
+        string previous = stateMachineGenerator.InitialState;
         string entered;
         
         do

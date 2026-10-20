@@ -199,7 +199,7 @@ public class StateMachineGenerator
                 $"\tpublic ISaveChunk<{Name}Data> {Name}Chunk {{ get; set; }} = default!;",
                 "#endregion Save",
                 "",
-                "#region  Dependencies",
+                "#region Dependencies",
                 $"\t[Dependency] public {SavingChunk}Data {SavingChunk}Data => this.DependOn<{SavingChunk}Data>();",
                 "#endregion Dependencies",
             ]);
@@ -207,7 +207,7 @@ public class StateMachineGenerator
         else
         {
             lines.AddRange([
-                "#region  Dependencies",
+                "#region Dependencies",
                 "\t[Dependency] public EntityTable<uint> EntityTable => this.DependOn<EntityTable<uint>>();",
                 "#endregion Dependencies",
             ]);
@@ -218,7 +218,7 @@ public class StateMachineGenerator
             "#region Provisions",
             "#endregion",
             "",
-            "#region  State",
+            "#region State",
             $"\tpublic {Name}Logic {Name}Logic {{ get; set; }} = default!;",
             $"\tpublic {Name}Logic.IBinding {Name}Binding {{ get; set; }} = default!;",
             "#endregion State",
