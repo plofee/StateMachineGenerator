@@ -3,7 +3,10 @@
     static void Main(string[] args)
     {
         StateMachineGenerator stateMachineGenerator = new StateMachineGenerator();
-        Console.WriteLine("State Machine generation process will start after you provide necessary information so the process can be stopped before that point without adverse effects.");
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Write("INFO: ");
+        Console.ResetColor();
+        Console.WriteLine("State Machine file generating process will start after you provide all of the necessary information so the process can be stopped before that point without adverse effects.");
         
         PrintWithSeparator("Enter the name of the state machine:");
         stateMachineGenerator.Name = Console.ReadLine();
@@ -13,7 +16,7 @@
             return;
         }
         
-        PrintWithSeparatorAndHighlightedText("Do you want the generated files in a namespace?", "enter name if you do or leave blank");
+        PrintWithSeparatorAndHighlightedText("Should generated files be in a namespace?", "enter name if you do or leave blank");
         stateMachineGenerator.Namespace = Console.ReadLine();
         
         PrintWithSeparatorAndHighlightedText("Do you want a particular initial state?", "enter the state name or leave blank");
@@ -62,7 +65,7 @@
             }
         } while (!string.IsNullOrEmpty(entered));
         
-        PrintWithSeparatorAndHighlightedText("Do you want that the state file names start with 'StateMachineNameLogic.State.'", "y/N");
+        PrintWithSeparatorAndHighlightedText("Should state file names start with 'StateMachineNameLogic.State.'", "y/N");
         stateMachineGenerator.UseExtendedStateFileName = (Console.ReadLine() ?? "").ToLower().Contains('y');
         
         PrintWithSeparatorAndHighlightedText("Start entering State Machine inputs.", "leave name blank when finished");
@@ -125,7 +128,8 @@
         Console.WriteLine(new string('-', line.Length + highlightedText.Length + 1));
         Console.Write(line);
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($" ({highlightedText})");
+        Console.Write($" ({highlightedText})");
         Console.ResetColor();
+        Console.WriteLine();
     }
 }
