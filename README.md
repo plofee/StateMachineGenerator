@@ -34,6 +34,23 @@ If you want a state that is a child of the previously entered state start with a
 
 If you want a state that has the same parent as the previously entered state start with two dots: `..ChildState`
 
+Example of generating states:
+```text
+Do you want a particular initial state? (enter the state name or leave blank)
+Alive
+------------------------------------------------------------------------------------------------------
+Start entering possible states. When you are finished with the states submit a blank line to continue.
+.Grounded
+State Grounded with a parent Alive has been added
+..Airborne
+State Airborne with a parent Alive has been added
+.Jumping
+State Jumping with a parent Airborne has been added
+Defeated.Dead
+State Dead with a parent Defeated has been added
+
+```
+
 ## Generated file hierarchy
 
 This is an example of all files generated for a state machine called `Player` (including optional files).
@@ -47,7 +64,7 @@ Folders are marked with brackets. Files/folders that are inside a folder are mov
             - Alive.Airborne.cs
             - Alive.Airborne.Jumping.cs
             - Alive.Grounded.cs
-            - Alive.Dead.cs
+            - Dead.cs
         - PlayerLogic.cs
         - PlayerLogic.Data.cs
         - PlayerLogic.Input.cs
@@ -55,6 +72,106 @@ Folders are marked with brackets. Files/folders that are inside a folder are mov
         - PlayerLogic.Settings.cs
     - Player.cs
     - PlayerData.cs
+```
+
+## Examples: 
+
+### Player.cs
+
+```csharp
+namespace GameDemo;
+
+using Chickensoft.SaveFileBuilder;
+using Chickensoft.LogicBlocks;
+using Chickensoft.Introspection;
+using Chickensoft.Collections;
+using Chickensoft.AutoInject;
+using Godot;
+
+public interface IPlayer
+{
+}
+
+[Meta(typeof(IAutoNode))]
+public partial class Player : Node, IPlayer
+{
+	public override void _Notification(int what) => this.Notify(what);
+
+#region Save
+	[Dependency] public EntityTable<uint> EntityTable => this.DependOn<EntityTable<uint>>();
+	[Dependency] public ISaveChunk<GameData> GameChunk => this.DependOn<ISaveChunk<GameData>>();
+	public ISaveChunk<PlayerData> PlayerChunk { get; set; } = default!;
+#endregion Save
+
+#region Dependencies
+	[Dependency] public GameData GameData => this.DependOn<GameData>();
+#endregion Dependencies
+
+#region Provisions
+#endregion
+
+#region  State
+	public PlayerLogic PlayerLogic { get; set; } = default!;
+	public PlayerLogic.IBinding PlayerBinding { get; set; } = default!;
+#endregion State
+
+	public void Setup()
+	{
+		PlayerLogic = new PlayerLogic();
+		PlayerLogic.Save(() => new PlayerLogic.Data() { });
+
+		PlayerChunk = new SaveChunk<PlayerData>(
+			onSave: (chunk) => new PlayerData()
+			{
+				StateMachine = PlayerLogic
+			},
+			onLoad: (chunk, data) =>
+			{
+				PlayerLogic.RestoreFrom(data.StateMachine);
+				PlayerLogic.Start();
+			}
+		);
+	}
+
+	public void OnResolved()
+	{
+		GameChunk.AddChunk(PlayerChunk);
+		PlayerBinding = PlayerLogic.Bind();
+		this.Provide();
+		PlayerLogic.Start();
+	}
+
+	public void OnExitTree()
+	{
+		PlayerLogic.Stop();
+		PlayerBinding.Dispose();
+	}
+}
+```
+
+### PlayerLogic.State.Alive.Grounded.cs
+
+```csharp
+namespace GameDemo;
+
+using Chickensoft.LogicBlocks;
+using Chickensoft.Introspection;
+using Chickensoft.Collections;
+using Godot;
+
+public partial class PlayerLogic
+{
+	public partial record State
+	{
+		[Meta, Id("player_logic_state_grounded")]
+		public partial record Grounded: Alive
+		{
+			public Grounded()
+			{
+			}
+		}
+	}
+}
 ```
 
 ## TODO
