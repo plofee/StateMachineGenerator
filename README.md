@@ -6,6 +6,8 @@ State machine code generator for [LogicBlocks] from [Chickensoft] (compatible wi
 
 Generates all boilerplate code necessary for a state machine.
 
+Files are currently generated in the folder: `projectRoot/bin/Debug/net10.0`
+
 ---
 
 ## Capabilities
@@ -19,7 +21,7 @@ Generates all boilerplate code necessary for a state machine.
 
 ## Generating states
 
-When asked, enter state names one by one separated by a newline (hit Enter). When finished leave the state name blank.
+When asked, enter state names (one in each line). When finished leave the state name blank.
 
 If you just enter the name of the state, that state will be a child of `State`.
 
@@ -54,6 +56,13 @@ Folders are marked with brackets. Files/folders that are inside a folder are mov
     - Player.cs
     - PlayerData.cs
 ```
+
+## TODO
+
+Expand this project so that it can easily be installed as a tool and run from the terminal in the folder where you want to generate files for ease of use.
+
+Add an option to generate saving logic for the root node that provides the initial chunk.
+
 
 
 [LogicBlocks]: https://github.com/chickensoft-games/LogicBlocks

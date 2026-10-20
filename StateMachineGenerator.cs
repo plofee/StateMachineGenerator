@@ -48,6 +48,7 @@ public class StateMachineGenerator
 
     private string _rootPath;
     private bool _overwriteFiles;
+    private Dictionary<string, List<string>> _files;
 
     public StateMachineGenerator()
     {
@@ -56,6 +57,7 @@ public class StateMachineGenerator
         Inputs = new ();
         Outputs = new ();
         _rootPath = Environment.CurrentDirectory;
+        _files = new Dictionary<string, List<string>>();
     }
 
     public void AddState(string name, string parent)
@@ -92,25 +94,25 @@ public class StateMachineGenerator
 #region Root
         string path = $"{_rootPath}/{ToCamelCase(Name)}";
         CreateFolderIfMissing(path);
-        CreateFileIfMissing($"{path}/{Name}.cs", GenerateAutoNodeLines());
+        AddFileLinesIfMissing($"{path}/{Name}.cs", GenerateAutoNodeLines());
         if (HasSettings)
         {
-            CreateFileIfMissing($"{path}/{Name}Logic.Settings.cs", GenerateSettingsLines());
+            AddFileLinesIfMissing($"{path}/{Name}Logic.Settings.cs", GenerateSettingsLines());
         }
         
         if (HasSavingLogic)
         {
-            CreateFileIfMissing($"{path}/{Name}Data.cs", GenerateDataLines());
+            AddFileLinesIfMissing($"{path}/{Name}Data.cs", GenerateDataLines());
         }
 #endregion
 
 #region Root/State
         path = $"{_rootPath}/{ToCamelCase(Name)}/state";
         CreateFolderIfMissing(path);
-        CreateFileIfMissing($"{path}/{Name}Logic.cs", GenerateLogicFileLines());
-        CreateFileIfMissing($"{path}/{Name}Logic.Data.cs", GenerateLogicDataLines());
-        CreateFileIfMissing($"{path}/{Name}Logic.Input.cs", GenerateInputLines());
-        CreateFileIfMissing($"{path}/{Name}Logic.Output.cs", GenerateOutputLines());
+        AddFileLinesIfMissing($"{path}/{Name}Logic.cs", GenerateLogicFileLines());
+        AddFileLinesIfMissing($"{path}/{Name}Logic.Data.cs", GenerateLogicDataLines());
+        AddFileLinesIfMissing($"{path}/{Name}Logic.Input.cs", GenerateInputLines());
+        AddFileLinesIfMissing($"{path}/{Name}Logic.Output.cs", GenerateOutputLines());
 #endregion
 
 #region Root/State/States
@@ -122,10 +124,12 @@ public class StateMachineGenerator
             {
                 string classNamePrefix = UseExtendedStateFileName ? $"{Name}Logic.State." : "";
                 string extendedPath = $"{path}/{classNamePrefix}{ResolveFileNameForState(States[key][i])}";
-                CreateFileIfMissing(extendedPath, GenerateStateLines(States[key][i], key));
+                AddFileLinesIfMissing(extendedPath, GenerateStateLines(States[key][i], key));
             }
         }
 #endregion
+        
+        CreateFiles();
     }
 
     private string ResolveFileNameForState(string stateName)
@@ -437,7 +441,7 @@ public class StateMachineGenerator
         return lines;
     }
     
-    private void CreateFileIfMissing(string path, IEnumerable<string> lines)
+    private void AddFileLinesIfMissing(string path, List<string> lines)
     {
         if (_overwriteFiles == false && File.Exists(path))
         {
@@ -451,11 +455,11 @@ public class StateMachineGenerator
                 throw new Exception("File overwriting permission denied.");
             }
         }
-        
-        File.WriteAllLines(path, lines);
+
+        _files[path] = lines;
     }
     
-    private void CreateFolderIfMissing(string fullPath)
+    private static void CreateFolderIfMissing(string fullPath)
     {
         if (!Directory.Exists(fullPath))
         {
@@ -475,6 +479,14 @@ public class StateMachineGenerator
                 $"namespace {Namespace};",
                 ""
             ];
+        }
+    }
+
+    private void CreateFiles()
+    {
+        foreach (string path in _files.Keys)
+        {
+            File.WriteAllLines(path, _files[path]);
         }
     }
     
