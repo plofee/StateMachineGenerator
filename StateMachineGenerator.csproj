@@ -1,10 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
         <TargetFramework>net10.0</TargetFramework>
+        <OutputType>Exe</OutputType>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <OutputPath>./nupkg</OutputPath>
+
+        <IsPackable>true</IsPackable>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <ToolCommandName>statemachinegenerator</ToolCommandName>
+        <PackAsTool>true</PackAsTool>
+        
+        <Title>StateMachineGenerator</Title>
+        <Version>1.0.0</Version>
+        <Description>State machine boilerplate code generator for Chickensoft.LogicBlocks</Description>
+        <Copyright>© 2026 Chickensoft</Copyright>
+        <Authors>plofee</Authors>
+        <Company>Chickensoft</Company>
+        
+        <PackageId>Chickensoft.StateMachineGenerator.Unofficial</PackageId>
+        <PackageTags>chickensoft; logic blocks; godot; state machine; code generator</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageProjectUrl>https://github.com/plofee/StateMachineGenerator</PackageProjectUrl>
+        
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/plofee/StateMachineGenerator</RepositoryUrl>
     </PropertyGroup>
 
+    <ItemGroup>
+        <None Include="./README.md" Pack="true" PackagePath="\" />
+        <None Include="./LICENSE" Pack="true" PackagePath="\" />
+    </ItemGroup>
 </Project>
