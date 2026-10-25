@@ -19,6 +19,21 @@ Files are currently generated in the folder: `projectRoot/bin/Debug/net10.0`
 - optional Settings file
 - state file names can optionally begin with `'StateMachineName'Logic.State.`
 
+## Installation
+
+Open terminal and enter the following command:
+
+```
+dotnet tool install Chickensoft.StateMachineGenerator.Unofficial --version 1.0.0
+```
+
+You can use the tool by entering the command `statemachinegenerator` into the terminal. The files will be generated in the location where the terminal is currently positioned.
+
+To uninstall the tool enter the following commant in the terminal:
+```
+dotnet tool uninstall Chickensoft.StateMachineGenerator.Unofficial
+```
+
 ## Generating states
 
 When asked, enter state names (one in each line). When finished leave the state name blank.
