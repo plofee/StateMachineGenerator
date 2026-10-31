@@ -95,10 +95,6 @@ public class StateMachineGenerator
         string path = $"{_rootPath}/{ToCamelCase(Name)}";
         CreateFolderIfMissing(path);
         AddFileLinesIfMissing($"{path}/{Name}.cs", GenerateAutoNodeLines());
-        if (HasSettings)
-        {
-            AddFileLinesIfMissing($"{path}/{Name}Logic.Settings.cs", GenerateSettingsLines());
-        }
         
         if (HasSavingLogic)
         {
@@ -113,6 +109,11 @@ public class StateMachineGenerator
         AddFileLinesIfMissing($"{path}/{Name}Logic.Data.cs", GenerateLogicDataLines());
         AddFileLinesIfMissing($"{path}/{Name}Logic.Input.cs", GenerateInputLines());
         AddFileLinesIfMissing($"{path}/{Name}Logic.Output.cs", GenerateOutputLines());
+        
+        if (HasSettings)
+        {
+            AddFileLinesIfMissing($"{path}/{Name}Logic.Settings.cs", GenerateSettingsLines());
+        }
 #endregion
 
 #region Root/State/States

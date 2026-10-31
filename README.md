@@ -6,7 +6,9 @@ State machine code generator for [LogicBlocks] from [Chickensoft] (compatible wi
 
 Generates all boilerplate code necessary for a state machine.
 
-Files are currently generated in the folder: `projectRoot/bin/Debug/net10.0`
+Installed tool generates files in the folder where it is run.
+
+Cloned repo will generate files in the folder: `projectRoot/bin/Debug/net10.0`
 
 ---
 
@@ -19,7 +21,9 @@ Files are currently generated in the folder: `projectRoot/bin/Debug/net10.0`
 - optional Settings file
 - state file names can optionally begin with `'StateMachineName'Logic.State.`
 
-## Installation
+## Instructions
+
+### Install
 
 Open terminal and enter the following command:
 
@@ -27,8 +31,10 @@ Open terminal and enter the following command:
 dotnet tool install Chickensoft.StateMachineGenerator.Unofficial --version 1.0.0
 ```
 
+### Run tool
 You can use the tool by entering the command `statemachinegenerator` into the terminal. The files will be generated in the location where the terminal is currently positioned.
 
+### Uninstall
 To uninstall the tool enter the following commant in the terminal:
 ```
 dotnet tool uninstall Chickensoft.StateMachineGenerator.Unofficial
